@@ -78,14 +78,19 @@ public class GameView extends View implements SensorEventListener {
         float newX = ball.getX() + dx;
         float newY = ball.getY() + dy;
 
-        if (newX < ball.getRadius()) newX = ball.getRadius();
-        else if (newX > screenWidth - ball.getRadius()) newX = screenWidth - ball.getRadius();
+        newX = Math.max(ball.getRadius(), Math.min(newX, screenWidth - ball.getRadius()));
+        newY = Math.max(ball.getRadius(), Math.min(newY, screenHeight - ball.getRadius()));
 
-        if (newY < ball.getRadius()) newY = ball.getRadius();
-        else if (newY > screenHeight - ball.getRadius()) newY = screenHeight - ball.getRadius();
+        if (!labyrinth.isCollision(newX, newY, ball.getRadius())) {
+            ball.setX(newX);
+            ball.setY(newY);
+        } else {
+            handleCollision();
+        }
+    }
 
-        ball.setX(newX);
-        ball.setY(newY);
+    private void handleCollision() {
+        Toast.makeText(getContext(), "Collision with wall!", Toast.LENGTH_SHORT).show();
     }
 
 

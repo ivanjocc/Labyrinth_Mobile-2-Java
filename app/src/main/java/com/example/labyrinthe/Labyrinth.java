@@ -112,5 +112,15 @@ public class Labyrinth {
         return new Ball(x, y, ballRadius);
     }
 
+    public boolean isCollision(float newX, float newY, int radius) {
+        for (Wall wall : walls) {
+            if (newX + radius > wall.getX() && newX - radius < wall.getX() + wall.getWidth() &&
+                    newY + radius > wall.getY() && newY - radius < wall.getY() + wall.getHeight()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 
 }
