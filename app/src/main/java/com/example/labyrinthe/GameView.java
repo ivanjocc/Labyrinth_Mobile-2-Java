@@ -15,6 +15,9 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
+import android.graphics.drawable.Drawable;
+
+import androidx.core.content.ContextCompat;
 
 import java.util.Random;
 
@@ -24,7 +27,7 @@ public class GameView extends View implements SensorEventListener {
     private float ax = 0, ay = 0;
     private int screenWidth, screenHeight;
     private Random random = new Random();
-
+    private Drawable background;
     private Goal goal;
     private Labyrinth labyrinth;
     private Ball ball;
@@ -34,6 +37,9 @@ public class GameView extends View implements SensorEventListener {
         setupScreenDimensions();
         initGameComponents();
         setupAccelerometer(context);
+
+        background = ContextCompat.getDrawable(context, R.drawable.game_background);
+        setBackground(background);
     }
 
     private void setupScreenDimensions() {
@@ -47,7 +53,7 @@ public class GameView extends View implements SensorEventListener {
 
     private void initGameComponents() {
         labyrinth = new Labyrinth(screenWidth, screenHeight);
-        ball = labyrinth.createBall(50);
+        ball = labyrinth.createBall(30);
     }
 
 
@@ -96,7 +102,7 @@ public class GameView extends View implements SensorEventListener {
     }
 
     private void handleCollision() {
-        Toast.makeText(getContext(), "Collision with wall!", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getContext(), "Collision with wall!", Toast.LENGTH_SHORT).show();
     }
 
     @Override
