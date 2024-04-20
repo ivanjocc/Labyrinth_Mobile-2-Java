@@ -8,12 +8,14 @@ import java.util.Random;
 import java.util.Random;
 
 import android.graphics.Canvas;
+import android.graphics.Paint;
 
 public class Labyrinth {
     private ArrayList<Wall> walls;
     private ArrayList<Hole> holes;
     private int width;
     private int height;
+    private Goal goal;
     private Random random = new Random();
 
     public Labyrinth(int width, int height) {
@@ -31,6 +33,7 @@ public class Labyrinth {
         for (Hole hole : holes) {
             hole.draw(canvas);
         }
+        goal.draw(canvas, new Paint());
     }
 
     public ArrayList<Wall> getWalls() {
@@ -44,6 +47,20 @@ public class Labyrinth {
     private void initializeLabyrinth() {
         createWalls(10);
         createHoles(10);
+        createGoal();
+    }
+
+    private void createGoal() {
+        int x, y;
+        do {
+            x = random.nextInt(width - 30) + 15;
+            y = random.nextInt(height - 30) + 15;
+        } while (checkOverlap(x, y, 15));
+        goal = new Goal(x, y, 30);
+    }
+
+    public Goal getGoal() {
+        return goal;
     }
 
     private void createWalls(int count) {

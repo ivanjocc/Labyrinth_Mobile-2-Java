@@ -25,6 +25,7 @@ public class GameView extends View implements SensorEventListener {
     private int screenWidth, screenHeight;
     private Random random = new Random();
 
+    private Goal goal;
     private Labyrinth labyrinth;
     private Ball ball;
 
@@ -85,6 +86,7 @@ public class GameView extends View implements SensorEventListener {
             ball.setX(newX);
             ball.setY(newY);
             checkForHole();
+            checkForVictory();
         } else {
             handleCollision();
         }
@@ -128,4 +130,21 @@ public class GameView extends View implements SensorEventListener {
             ((Activity) getContext()).finish();
         });
     }
+
+    private void checkForVictory() {
+        Goal goal = labyrinth.getGoal();
+        double distance = Math.sqrt(Math.pow(ball.getX() - goal.getX(), 2) + Math.pow(ball.getY() - goal.getY(), 2));
+        if (distance < ball.getRadius() + goal.getRadius()) {
+            winGame();
+        }
+    }
+
+
+    private void winGame() {
+        new Handler(Looper.getMainLooper()).post(() -> {
+            Toast.makeText(getContext(), "You won! Congratulations!", Toast.LENGTH_SHORT).show();
+            ((Activity) getContext()).finish();
+        });
+    }
+
 }
