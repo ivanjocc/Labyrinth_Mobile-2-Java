@@ -1,14 +1,28 @@
 package com.example.labyrinthe;
 
-import androidx.appcompat.app.AppCompatActivity;
-
+import android.app.Activity;
 import android.os.Bundle;
 
-public class GameActivity extends AppCompatActivity {
+public class GameActivity extends Activity {
+    private GameView gameView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_game);
+
+        gameView = new GameView(this);
+        setContentView(gameView);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        gameView.resume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        gameView.pause();
     }
 }
