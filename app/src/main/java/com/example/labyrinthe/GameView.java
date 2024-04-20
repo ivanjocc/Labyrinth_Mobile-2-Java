@@ -73,7 +73,7 @@ public class GameView extends View implements SensorEventListener {
 
 
     private void updateBallPosition() {
-        float dx = ax * -0.5f;
+        float dx = ax * -0.5f; // Invertir dirección x si es necesario
         float dy = ay * 0.5f;
         float newX = ball.getX() + dx;
         float newY = ball.getY() + dy;
@@ -84,6 +84,7 @@ public class GameView extends View implements SensorEventListener {
         if (!labyrinth.isCollision(newX, newY, ball.getRadius())) {
             ball.setX(newX);
             ball.setY(newY);
+            checkForHole();
         } else {
             handleCollision();
         }
@@ -92,6 +93,7 @@ public class GameView extends View implements SensorEventListener {
     private void handleCollision() {
         Toast.makeText(getContext(), "Collision with wall!", Toast.LENGTH_SHORT).show();
     }
+
 
 
     @Override

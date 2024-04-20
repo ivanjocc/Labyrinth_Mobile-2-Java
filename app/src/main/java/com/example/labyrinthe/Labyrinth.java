@@ -24,7 +24,6 @@ public class Labyrinth {
         initializeLabyrinth();
     }
 
-    // Método para dibujar el laberinto en el canvas
     public void draw(Canvas canvas) {
         for (Wall wall : walls) {
             wall.draw(canvas);
@@ -34,20 +33,17 @@ public class Labyrinth {
         }
     }
 
-    // Método para obtener la lista de muros
     public ArrayList<Wall> getWalls() {
         return walls;
     }
 
-    // Método para obtener la lista de hoyos
     public ArrayList<Hole> getHoles() {
         return holes;
     }
 
     private void initializeLabyrinth() {
-        // Asignar número y dimensiones de los muros y hoyos aleatoriamente
-        createWalls(5);
-        createHoles(3);
+        createWalls(10);
+        createHoles(10);
     }
 
     private void createWalls(int count) {
@@ -56,7 +52,9 @@ public class Labyrinth {
             int wallHeight = 50 + random.nextInt(150);
             int x = random.nextInt(width - wallWidth);
             int y = random.nextInt(height - wallHeight);
-            walls.add(new Wall(x, y, wallWidth, wallHeight));
+            if (!checkOverlap(x, y, Math.max(wallWidth, wallHeight) / 2)) {
+                walls.add(new Wall(x, y, wallWidth, wallHeight));
+            }
         }
     }
 
@@ -69,15 +67,10 @@ public class Labyrinth {
                 collision = false;
                 x = random.nextInt(width - radius * 2) + radius;
                 y = random.nextInt(height - radius * 2) + radius;
-                // Verificar colisiones con muros
-                for (Wall wall : walls) {
-                    if (x + radius > wall.getX() && x - radius < wall.getX() + wall.getWidth() &&
-                            y + radius > wall.getY() && y - radius < wall.getY() + wall.getHeight()) {
-                        collision = true;
-                        break;
-                    }
+                if (checkOverlap(x, y, radius)) {
+                    collision = true;
                 }
-            } while (collision); // Reintentar si hay colisión
+            } while (collision);
             holes.add(new Hole(x, y, radius));
         }
     }
@@ -121,6 +114,4 @@ public class Labyrinth {
         }
         return false;
     }
-
-
 }
