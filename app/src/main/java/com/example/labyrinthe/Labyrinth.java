@@ -48,7 +48,7 @@ public class Labyrinth {
 
     private void createWalls(int count) {
         for (int i = 0; i < count; i++) {
-            int wallWidth = 50 + random.nextInt(150);
+            int wallWidth = 100 + random.nextInt(150);
             int wallHeight = 50 + random.nextInt(150);
             int x = random.nextInt(width - wallWidth);
             int y = random.nextInt(height - wallHeight);
@@ -60,7 +60,7 @@ public class Labyrinth {
 
     private void createHoles(int count) {
         for (int i = 0; i < count; i++) {
-            int radius = 20 + random.nextInt(30);
+            int radius = 40 + random.nextInt(30);
             int x, y;
             boolean collision;
             do {
