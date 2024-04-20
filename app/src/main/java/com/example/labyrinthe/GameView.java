@@ -74,8 +74,11 @@ public class GameView extends View implements SensorEventListener {
 
 
     private void updateBallPosition() {
-        float dx = ax * -0.5f;
-        float dy = ay * 0.5f;
+        float speedFactorX = 3.0f;
+        float speedFactorY = 3.0f;
+
+        float dx = ax * -0.5f * speedFactorX;
+        float dy = ay * 0.5f * speedFactorY;
         float newX = ball.getX() + dx;
         float newY = ball.getY() + dy;
 
