@@ -1,5 +1,6 @@
 package com.example.labyrinthe;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Point;
@@ -7,10 +8,13 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import java.util.Random;
 
@@ -23,12 +27,6 @@ public class GameView extends View implements SensorEventListener {
 
     private Labyrinth labyrinth;
     private Ball ball;
-
-//    public GameView(Context context) {
-//        super(context);
-//        initGameComponents();
-//        setupAccelerometer(context);
-//    }
 
     public GameView(Context context) {
         super(context);
@@ -48,29 +46,7 @@ public class GameView extends View implements SensorEventListener {
 
     private void initGameComponents() {
         labyrinth = new Labyrinth(screenWidth, screenHeight);
-        // Asegurar que la bola no se inicializa dentro de un muro o un hoyo
-        int x, y;
-        boolean valid;
-        do {
-            valid = true;
-            x = random.nextInt(screenWidth - 40) + 20; // Asumiendo radio de 20
-            y = random.nextInt(screenHeight - 40) + 20;
-            for (Wall wall : labyrinth.getWalls()) {
-                if (x > wall.getX() && x < wall.getX() + wall.getWidth() &&
-                        y > wall.getY() && y < wall.getY() + wall.getHeight()) {
-                    valid = false;
-                    break;
-                }
-            }
-            for (Hole hole : labyrinth.getHoles()) {
-                double distance = Math.sqrt(Math.pow(x - hole.getX(), 2) + Math.pow(y - hole.getY(), 2));
-                if (distance < hole.getRadius() + 20) { // 20 es el radio de la bola
-                    valid = false;
-                    break;
-                }
-            }
-        } while (!valid);
-        ball = new Ball(x, y, 20);
+        ball = labyrinth.createBall(20);
     }
 
 
@@ -91,20 +67,31 @@ public class GameView extends View implements SensorEventListener {
     public void onSensorChanged(SensorEvent event) {
         ax = event.values[0];
         ay = event.values[1];
-
         updateBallPosition();
         invalidate();
     }
 
+
     private void updateBallPosition() {
         float dx = ax * -0.5f;
         float dy = ay * 0.5f;
-        ball.updatePosition(dx, dy);
+        float newX = ball.getX() + dx;
+        float newY = ball.getY() + dy;
+
+        if (newX < ball.getRadius()) newX = ball.getRadius();
+        else if (newX > screenWidth - ball.getRadius()) newX = screenWidth - ball.getRadius();
+
+        if (newY < ball.getRadius()) newY = ball.getRadius();
+        else if (newY > screenHeight - ball.getRadius()) newY = screenHeight - ball.getRadius();
+
+        ball.setX(newX);
+        ball.setY(newY);
     }
+
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
-//        nothing here
+        // nothing here
     }
 
     @Override
@@ -118,5 +105,22 @@ public class GameView extends View implements SensorEventListener {
 
     public void pause() {
         sensorManager.unregisterListener(this);
+    }
+
+    private void checkForHole() {
+        for (Hole hole : labyrinth.getHoles()) {
+            double distance = Math.sqrt(Math.pow(ball.getX() - hole.getX(), 2) + Math.pow(ball.getY() - hole.getY(), 2));
+            if (distance < ball.getRadius() + hole.getRadius()) {
+                gameOver();
+                return;
+            }
+        }
+    }
+
+    private void gameOver() {
+        new Handler(Looper.getMainLooper()).post(() -> {
+            Toast.makeText(getContext(), "You lost! Falling into a hole!", Toast.LENGTH_SHORT).show();
+            ((Activity) getContext()).finish();
+        });
     }
 }

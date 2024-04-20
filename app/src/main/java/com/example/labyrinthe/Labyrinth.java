@@ -81,4 +81,36 @@ public class Labyrinth {
             holes.add(new Hole(x, y, radius));
         }
     }
+
+    public boolean checkOverlap(int x, int y, int radius) {
+        for (Wall wall : walls) {
+            if (x + radius > wall.getX() && x - radius < wall.getX() + wall.getWidth() &&
+                    y + radius > wall.getY() && y - radius < wall.getY() + wall.getHeight()) {
+                return true;
+            }
+        }
+        for (Hole hole : holes) {
+            double distance = Math.sqrt(Math.pow(x - hole.getX(), 2) + Math.pow(y - hole.getY(), 2));
+            if (distance < radius + hole.getRadius()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public Ball createBall(int ballRadius) {
+        int x, y;
+        boolean valid;
+        do {
+            valid = true;
+            x = random.nextInt(width - ballRadius * 2) + ballRadius;
+            y = random.nextInt(height - ballRadius * 2) + ballRadius;
+            if (checkOverlap(x, y, ballRadius)) {
+                valid = false;
+            }
+        } while (!valid);
+        return new Ball(x, y, ballRadius);
+    }
+
+
 }
